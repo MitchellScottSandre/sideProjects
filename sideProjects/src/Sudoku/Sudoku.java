@@ -9,6 +9,9 @@ package Sudoku;
  *
  * @author Scott
  */
+
+//parse in photo to 2d array
+//if not, display error message, quit application
 public class Sudoku {
 
     /**

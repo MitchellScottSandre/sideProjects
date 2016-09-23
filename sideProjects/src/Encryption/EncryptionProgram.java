@@ -47,6 +47,8 @@ public class EncryptionProgram {
     
     //playFair
     private static int[][] tableau = new int[5][5];
+    private static String playfairEncryptionCode;
+    private static String playfairDecryptionCode;
  
     //======================================================Functions================================================
     private static void exit() {
@@ -230,9 +232,28 @@ public class EncryptionProgram {
         displayTableau();
     }
     
+    private static boolean goodCodeWord(String s){
+        for (int i = 0; i < s.length(); i++){
+            if ( (int)s.charAt(i) < 65 || (int) s.charAt(i) > 90){
+                return false; // ISNT A CAPITAL LETTER
+            }
+        }
+        return true;
+    }
     private static void makeCodeWordTableau(){
+        boolean gotGoodInput = false;
+        while (gotGoodInput == false){
+            System.out.println("Please enter your code word for the tableau: ");
+            playfairEncryptionCode = input.nextLine();
+            if (goodCodeWord (playfairEncryptionCode) == true){
+                
+            } else {
+                System.out.println("That code word is not acceptable. Try again");
+            }
+        }
         
     }
+    
     private static void doPlayfairEncrypt() {//TO DO
         int choice, typeOfPlayfair = -1;
         final int ALPHABETIC = 1;
