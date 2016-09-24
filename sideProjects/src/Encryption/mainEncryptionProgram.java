@@ -449,19 +449,17 @@ public class mainEncryptionProgram {
                     s2 += (char) s1.charAt(j) + "X";
                 }
             }
-            System.out.println("is now -->" + s2);
+            System.out.println("is now -->" + s2);//for testing purposes only
         }
 
-        for (int i = 0; i < inputTextLines_List.size(); i++) {
+        for (int i = 0; i < inputTextLines_List.size(); i++) {//for testing purposes only
             System.out.println(inputTextLines_List.get(i));
         }
-
-        //now encrypt the file
-        //line by line....
-        //put into pairs
-        //if a pair is both of the same letters, make second one X
-        //shift the rest of the pairs, repeat till end of line
-        //if odd number by end, add X
+        
+        //now, do plafair encrypt
+        //int letterRowAndCol[] = new int[2];
+        //public static int[] findLetterRowAndCol();
+        
     }
 
     private static void doPlayfairDecrypt() {//TO DO
