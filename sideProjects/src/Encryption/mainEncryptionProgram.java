@@ -360,10 +360,27 @@ public class mainEncryptionProgram {
         }
     }
 
+    private static int[] findLetterRowAndCol(char findMe){
+        int z[] = new int[2];
+        z[0] = -1;
+        z[1] = -1;
+        for (int r = 0; r < 5; r++){
+            for (int c = 0; c < 5; c++){
+                if (tableau[r][c] == (int) findMe){
+                    z[0] = r;
+                    z[1] = c;
+                    return z;
+                }
+            }
+        }
+        return z;
+    }
     private static void doPlayfairEncrypt() {//TO DO
         int choice, typeOfPlayfair = -1;
         final int ALPHABETIC = 1;
         final int CODE_MERGE_ALPHABETIC = 2;
+        int firstChar_letterRowAndCol[] = new int[2];
+        int secondChar_letterRowAndCol[] = new int[2];
         boolean gotGoodInput = false;
         String s1 = "";
         String s2 = "";
@@ -449,16 +466,29 @@ public class mainEncryptionProgram {
                     s2 += (char) s1.charAt(j) + "X";
                 }
             }
-            System.out.println("is now -->" + s2);//for testing purposes only
+            System.out.println("Scott make sure this works below here:");
+            inputTextLines_List.add(i, s2);
+            inputTextLines_List.remove(i + 1);
+            System.out.println("2 is now -->" + s2);
+            System.out.println("2 is now -->" + inputTextLines_List.get(i));//for testing purposes only
         }
 
         for (int i = 0; i < inputTextLines_List.size(); i++) {//for testing purposes only
             System.out.println(inputTextLines_List.get(i));
         }
         
+        for (int i = 0; i < inputTextLines_List.size(); i++){
+            for (int j = 0; j < inputTextLines_List.get(i).length(); j++){
+                firstChar_letterRowAndCol = findLetterRowAndCol ( inputTextLines_List.get(i).charAt(j) );
+                secondChar_letterRowAndCol = findLetterRowAndCol( inputTextLines_List.get(i).charAt(j + 1) );
+                //now use these two locations to output the two encrypted 
+                j++;//skip the *
+            }
+        }
+        
         //now, do plafair encrypt
-        //int letterRowAndCol[] = new int[2];
-        //public static int[] findLetterRowAndCol();
+        //firstChar_letterRowAndCol
+        //findLetterRowAndCol
         
     }
 
