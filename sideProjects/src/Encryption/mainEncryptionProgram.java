@@ -26,6 +26,7 @@ public class mainEncryptionProgram {
     private static final int DECRYPT = 2;
     private static final String EXIT = "EXIT";
     private static final String[] typesOfEncryptions = {"Playfair", "Vigenere"};
+    private static final String ALPHABET = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
     //======================================================Variables================================================
 
     private static String inputFileName;
@@ -221,18 +222,27 @@ public class mainEncryptionProgram {
         }
     }
 
-    private static void makeRandomTableau() {//TO DO
-        final String ALPHABET = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
+    private static void makeRandomTableau() {//TO DO ----> print this tableau to same directory as output, but C:\test\tableau + dateTimeStamp.txt
+        int j;
+        boolean foundGoodSpot = false;
         int[] usedLetters = new int[25];
         for (int i = 0; i < 25; i++) {
             usedLetters[i] = 0;//empty, that letter is not used
         }
         for (int r = 0; r < 5; r++) {
             for (int c = 0; c < 5; c++) {
-                tableau[r][c] = ALPHABET.charAt(r * 5 + c);
+                foundGoodSpot = false;
+                while (foundGoodSpot == false) {
+                    j = (int) (Math.random() * 25 );
+                    if (usedLetters[j] == 0) {
+                        usedLetters[j] = 1;
+                        foundGoodSpot = true;
+                        tableau[r][c] = ALPHABET.charAt(j);
+                        break;
+                    }
+                }      
             }
         }
-        displayTableau();
     }
 
     private static boolean goodCodeWord(String s) {
@@ -271,19 +281,19 @@ public class mainEncryptionProgram {
         for (int i = 0; i < 25; i++) {
             usedLetters[i] = 0;//empty, that letter is not used
         }
-        for (int i = 0; i <playfairEncryptionCode.length() ; i++) {//TODO we dont want J in the tableau!
+        for (int i = 0; i < playfairEncryptionCode.length(); i++) {//TODO we dont want J in the tableau!
             System.out.println("--> " + (int) playfairEncryptionCode.charAt(i));
-            if ((int) playfairEncryptionCode.charAt(i) > 73){
-                usedLetters[ (int) playfairEncryptionCode.charAt(i) - 66] = 1;
+            if ((int) playfairEncryptionCode.charAt(i) > 73) {
+                usedLetters[(int) playfairEncryptionCode.charAt(i) - 67] = 1;
             } else {
-                usedLetters[ (int) playfairEncryptionCode.charAt(i) - 65] = 1;
+                usedLetters[(int) playfairEncryptionCode.charAt(i) - 65] = 1;
             }
-            
+
         }
-        
-        for (int i = 0; i < 25; i++){
-            if (usedLetters[i] == 0){
-                s += (char) (i + 65) + "";
+
+        for (int i = 0; i < 25; i++) {
+            if (usedLetters[i] == 0) {
+                s += ALPHABET.charAt(i) + "";
             }
         }
         System.out.println("s is " + s);
@@ -335,14 +345,19 @@ public class mainEncryptionProgram {
         //now fill the rest of it alphabetically
         restOfAlphabet = getRestOfAlphabet();
         int counter = 0;
-        for (int r = lastR; r < 5; r++) {
-            for (int c = lastC; c < 5; c++) {//TO DO, not outputting properly
-                tableau[r][c] = (int) restOfAlphabet.charAt(counter);
-                counter++;
+        boolean addNewChars = false;
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < 5; c++) {//TO DO, not outputting properly
+                if (r == lastR && c == lastC) {
+                    addNewChars = true;
+                }
+                if (addNewChars == true){
+                    tableau[r][c] = (int) restOfAlphabet.charAt(counter);
+                    counter++;
+                }
+
             }
         }
-
-        displayTableau();
     }
 
     private static void doPlayfairEncrypt() {//TO DO
@@ -353,10 +368,7 @@ public class mainEncryptionProgram {
 
         //put to uppercase
         //remove any other characters
-        //put into pairs
-        //if a pair is both of the same letters, make second one X
-        //shift the rest of the pairs, repeat till end of line
-        //if odd number by end, add X
+
         System.out.println("Playfair Encryption:");
         System.out.println("Playfair Encryption uses a tableau of 5 x 5 letters to encode your file.");
         System.out.println("This tableau can either use a scrambled alphabet or use a codephrase made by you,");
@@ -381,14 +393,26 @@ public class mainEncryptionProgram {
         switch (typeOfPlayfair) {
             case ALPHABETIC:
                 makeRandomTableau();
+                System.out.println("Finished creating random tableau.");
+                System.out.println("NEED TO OUTPUT IT TO SAME DIRECTORY AS INPUT FILE HERE.....");
                 break;
             case CODE_MERGE_ALPHABETIC:
                 makeCodePhraseTableau();
+                System.out.println("Finished creating Codephrase tableau.");
                 break;
             default://error
                 exit();
                 break;
         }
+        
+        displayTableau();
+        
+        //now encrypt the file
+        //line by line....
+        //put into pairs
+        //if a pair is both of the same letters, make second one X
+        //shift the rest of the pairs, repeat till end of line
+        //if odd number by end, add X
 
     }
 
