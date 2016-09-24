@@ -14,22 +14,20 @@ import java.util.Scanner;
  *
  * @author scott
  */
-public class EncryptionProgram {
+public class mainEncryptionProgram {
 
     //================================================INPUT OUTPUT ==================================================
-    
     private static Scanner input = new Scanner(System.in);
     private static Scanner fileScanner;
     private static PrintWriter outputWriter;
 
     //======================================================Constants================================================
-    
     private static final int ENCRYPT = 1;
     private static final int DECRYPT = 2;
     private static final String EXIT = "EXIT";
     private static final String[] typesOfEncryptions = {"Playfair", "Vigenere"};
     //======================================================Variables================================================
-    
+
     private static String inputFileName;
     private static String outputFileName;
     private static String inputText = "";
@@ -44,12 +42,12 @@ public class EncryptionProgram {
     private static String outputLine;
     private static ArrayList<String> inputTextLines_List = new ArrayList<String>();
     private static ArrayList<String> outputTextLines_List = new ArrayList<String>();
-    
+
     //playFair
     private static int[][] tableau = new int[5][5];
     private static String playfairEncryptionCode;
     private static String playfairDecryptionCode;
- 
+
     //======================================================Functions================================================
     private static void exit() {
         exit = true;
@@ -214,93 +212,184 @@ public class EncryptionProgram {
 
     }
 
-    private static void displayTableau(){
-        for (int r = 0; r < 5; r++){
-            for (int c = 0; c < 5; c++){
+    private static void displayTableau() {
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < 5; c++) {
                 System.out.print((char) tableau[r][c] + "  ");
             }
             System.out.print("\n");
         }
     }
-    private static void makeAlphabeticTableau(){
+
+    private static void makeRandomTableau() {//TO DO
         final String ALPHABET = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
-        for (int r = 0; r < 5; r++){
-            for (int c = 0; c < 5; c++){
+        int[] usedLetters = new int[25];
+        for (int i = 0; i < 25; i++) {
+            usedLetters[i] = 0;//empty, that letter is not used
+        }
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < 5; c++) {
                 tableau[r][c] = ALPHABET.charAt(r * 5 + c);
             }
         }
         displayTableau();
     }
-    
-    private static boolean goodCodeWord(String s){
-        for (int i = 0; i < s.length(); i++){
-            if ( (int)s.charAt(i) < 65 || (int) s.charAt(i) > 90){
+
+    private static boolean goodCodeWord(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (((int) s.charAt(i) < 65 || (int) s.charAt(i) > 90)) {
                 return false; // ISNT A CAPITAL LETTER
             }
         }
         return true;
     }
-    private static void makeCodeWordTableau(){
+
+    private static void removeRepeatedLettersAndSpaces_in_PlayfairCodeWord() {
+        System.out.println("CODE WAS: " + playfairEncryptionCode);
+        StringBuilder sb = new StringBuilder(playfairEncryptionCode);//sb.deleteCharAt
+        //String resultString = sb.toString();
+
+        playfairEncryptionCode = sb.toString();
+        System.out.println("CODE then: " + playfairEncryptionCode);
+        for (int i = 0; i < sb.length() - 1; i++) {
+            for (int z = i + 1; z < sb.length(); z++) {
+                if (sb.charAt(i) == sb.charAt(z)) {
+                    sb.deleteCharAt(z);
+                    z--;
+                }
+            }
+        }
+        playfairEncryptionCode = sb.toString();
+        System.out.println("CODE IS NOW: " + playfairEncryptionCode);
+    }
+
+    private static String getRestOfAlphabet() {
+        //playfairEncryptionCode 
+        //if the code is EFGHIKL do ABCD
+        String s = "";
+        int[] usedLetters = new int[25];
+        for (int i = 0; i < 25; i++) {
+            usedLetters[i] = 0;//empty, that letter is not used
+        }
+        for (int i = 0; i <playfairEncryptionCode.length() ; i++) {//TODO we dont want J in the tableau!
+            System.out.println("--> " + (int) playfairEncryptionCode.charAt(i));
+            if ((int) playfairEncryptionCode.charAt(i) > 73){
+                usedLetters[ (int) playfairEncryptionCode.charAt(i) - 66] = 1;
+            } else {
+                usedLetters[ (int) playfairEncryptionCode.charAt(i) - 65] = 1;
+            }
+            
+        }
+        
+        for (int i = 0; i < 25; i++){
+            if (usedLetters[i] == 0){
+                s += (char) (i + 65) + "";
+            }
+        }
+        System.out.println("s is " + s);
+        return s;
+    }
+
+    private static void makeCodePhraseTableau() {
         boolean gotGoodInput = false;
-        while (gotGoodInput == false){
+        int lastR = 0, lastC = 0;
+        String restOfAlphabet;
+        while (gotGoodInput == false) {
             System.out.println("Please enter your code word for the tableau: ");
             playfairEncryptionCode = input.nextLine();
-            if (goodCodeWord (playfairEncryptionCode) == true){
-                
+            playfairEncryptionCode = playfairEncryptionCode.toUpperCase();//to upper case
+
+            StringBuilder sb = new StringBuilder(playfairEncryptionCode);//sb.deleteCharAt
+            //String resultString = sb.toString();
+            for (int i = 0; i < sb.length(); i++) {
+                if (sb.charAt(i) == ' ') {
+                    sb.deleteCharAt(i);
+                }
+            }
+            playfairEncryptionCode = sb.toString();
+            if (goodCodeWord(playfairEncryptionCode) == true) {
+                gotGoodInput = true;
+                System.out.println("good code word");
+                //remove any repeated letters
+                playfairEncryptionCode = playfairEncryptionCode.replace('J', 'I');//replace any J with I
+                removeRepeatedLettersAndSpaces_in_PlayfairCodeWord();
             } else {
                 System.out.println("That code word is not acceptable. Try again");
             }
         }
-        
+        //now insert letters into tableau, fill the rest in alphabetically
+
+        for (int r = 0; r < 5; r++) {//place the passphrase characters into the tableau
+            for (int c = 0; c < 5; c++) {
+                if (r * 5 + c < playfairEncryptionCode.length()) {
+                    tableau[r][c] = playfairEncryptionCode.charAt(r * 5 + c);
+                } else {
+                    lastR = r;
+                    lastC = c;
+                    r = 100;
+                    c = 100;
+                    break;
+                }
+            }
+        }
+        //now fill the rest of it alphabetically
+        restOfAlphabet = getRestOfAlphabet();
+        int counter = 0;
+        for (int r = lastR; r < 5; r++) {
+            for (int c = lastC; c < 5; c++) {//TO DO, not outputting properly
+                tableau[r][c] = (int) restOfAlphabet.charAt(counter);
+                counter++;
+            }
+        }
+
+        displayTableau();
     }
-    
+
     private static void doPlayfairEncrypt() {//TO DO
         int choice, typeOfPlayfair = -1;
         final int ALPHABETIC = 1;
         final int CODE_MERGE_ALPHABETIC = 2;
         boolean gotGoodInput = false;
-        
+
         //put to uppercase
         //remove any other characters
         //put into pairs
         //if a pair is both of the same letters, make second one X
         //shift the rest of the pairs, repeat till end of line
         //if odd number by end, add X
-        
         System.out.println("Playfair Encryption:");
         System.out.println("Playfair Encryption uses a tableau of 5 x 5 letters to encode your file.");
-        System.out.println("This tableau can either follow the order of the alphabet or use a code word made by you,");
+        System.out.println("This tableau can either use a scrambled alphabet or use a codephrase made by you,");
         System.out.println("which automatically has any repeated letters removed, insterted into an alphabetic tableau.\nYour choices are:");
-        System.out.println("1: Regular Alphabetic Tableay");
-        System.out.println("2: Code Word merged into an Alphabetic Tableau");
-        
-        while (gotGoodInput == false){
+        System.out.println("1: Random, Scrabled Tableau (write down key)");
+        System.out.println("2: Code Phrase merged into an Alphabetic Tableau");
+
+        while (gotGoodInput == false) {
             try {
                 choice = Integer.parseInt(input.nextLine());
-                if (choice == ALPHABETIC || choice == CODE_MERGE_ALPHABETIC){
+                if (choice == ALPHABETIC || choice == CODE_MERGE_ALPHABETIC) {
                     gotGoodInput = true;
                     typeOfPlayfair = choice;
                 } else {
                     System.out.println("You did not enter a number within the desired range...Try again");
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Something went wrong... Try again.");
-                
-            } 
+            }
         }
-        
+
         switch (typeOfPlayfair) {
             case ALPHABETIC:
-                makeAlphabeticTableau();
+                makeRandomTableau();
                 break;
             case CODE_MERGE_ALPHABETIC:
-                makeCodeWordTableau();
+                makeCodePhraseTableau();
                 break;
             default://error
                 exit();
                 break;
         }
-        
+
     }
 
     private static void doPlayfairDecrypt() {//TO DO
@@ -373,8 +462,7 @@ public class EncryptionProgram {
                 indexOfShiftArray = i % shiftValues.length;
                 beta = shiftValues[indexOfShiftArray];
                 encryptedValue = (int) inputTextLines_List.get(z).charAt(i);
-                decryptedValue = 126 - ( (beta - (encryptedValue - 32)) % 95);
-                
+                decryptedValue = 126 - ((beta - (encryptedValue - 32)) % 95);
 
                 outputLine += (char) decryptedValue;
 
@@ -398,31 +486,30 @@ public class EncryptionProgram {
 
     public static void main(String[] args) {
 
-        
-            startScreen();
-            getEncryptOrDecrypt();//ex: encrypt
-            getFileNames();//input file = ___; output file = ___
-            getTypeOfEncryption();//vigenere, playfair
-            if (encryptOrDecrypt == ENCRYPT) {
-                switch (typeOfEncryption) {
-                    case 1:
-                        doPlayfairEncrypt();
-                        break;
-                    case 2:
-                        doVigenereEncrypt();
-                        break;
-                }
-            } else {
-                switch (typeOfEncryption) {
-                    case 1:
-                        doPlayfairDecrypt();
-                        break;
-                    case 2:
-                        doVigenereDecrypt();
-                        break;
-                }
+        startScreen();
+        getEncryptOrDecrypt();//ex: encrypt
+        getFileNames();//input file = ___; output file = ___
+        getTypeOfEncryption();//vigenere, playfair
+        if (encryptOrDecrypt == ENCRYPT) {
+            switch (typeOfEncryption) {
+                case 1:
+                    doPlayfairEncrypt();
+                    break;
+                case 2:
+                    doVigenereEncrypt();
+                    break;
             }
-        
+        } else {
+            switch (typeOfEncryption) {
+                case 1:
+                    doPlayfairDecrypt();
+                    break;
+                case 2:
+                    doVigenereDecrypt();
+                    break;
+            }
+        }
+
     }
 
 }
