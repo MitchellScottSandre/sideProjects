@@ -233,14 +233,14 @@ public class mainEncryptionProgram {
             for (int c = 0; c < 5; c++) {
                 foundGoodSpot = false;
                 while (foundGoodSpot == false) {
-                    j = (int) (Math.random() * 25 );
+                    j = (int) (Math.random() * 25);
                     if (usedLetters[j] == 0) {
                         usedLetters[j] = 1;
                         foundGoodSpot = true;
                         tableau[r][c] = ALPHABET.charAt(j);
                         break;
                     }
-                }      
+                }
             }
         }
     }
@@ -347,11 +347,11 @@ public class mainEncryptionProgram {
         int counter = 0;
         boolean addNewChars = false;
         for (int r = 0; r < 5; r++) {
-            for (int c = 0; c < 5; c++) {//TO DO, not outputting properly
+            for (int c = 0; c < 5; c++) {
                 if (r == lastR && c == lastC) {
                     addNewChars = true;
                 }
-                if (addNewChars == true){
+                if (addNewChars == true) {
                     tableau[r][c] = (int) restOfAlphabet.charAt(counter);
                     counter++;
                 }
@@ -365,10 +365,11 @@ public class mainEncryptionProgram {
         final int ALPHABETIC = 1;
         final int CODE_MERGE_ALPHABETIC = 2;
         boolean gotGoodInput = false;
+        String s1 = "";
+        String s2 = "";
 
         //put to uppercase
         //remove any other characters
-
         System.out.println("Playfair Encryption:");
         System.out.println("Playfair Encryption uses a tableau of 5 x 5 letters to encode your file.");
         System.out.println("This tableau can either use a scrambled alphabet or use a codephrase made by you,");
@@ -404,16 +405,63 @@ public class mainEncryptionProgram {
                 exit();
                 break;
         }
-        
+
         displayTableau();
-        
+        //hello world // he ll ow or ld // he lx lo wo rl dx
+        //================================PUT INTO CAPITAL LETTERS WITH NO SPACES and NO Js===============================
+
+        System.out.println("initial size is : " + inputTextLines_List.size());
+        for (int i = 0; i < inputTextLines_List.size(); i++) {
+            s1 = "";
+            s2 = "";
+            s1 = inputTextLines_List.get(i).toUpperCase();
+            for (int j = 0; j < s1.length(); j++) {//s.charAt(i) < 65 || (int) s.charAt(i) > 90)
+                if (s1.charAt(j) == 'J') {
+                    s2 += 'I';
+                } else if ((int) s1.charAt(j) >= 65 && (int) s1.charAt(j) <= 90) {
+                    s2 += s1.charAt(j);
+                }
+//                else if (s1.charAt(j) == ' '){
+//                    s2 += " ";
+//                }
+            }
+            inputTextLines_List.add(i, s2);
+            inputTextLines_List.remove(i + 1);
+        }
+        System.out.println("after size is : " + inputTextLines_List.size());
+        int offset = 0;
+        //===========================put into pairs separated by * and still spaces
+        s1 = "";
+        s2 = "";
+        for (int i = 0; i < inputTextLines_List.size(); i++) {//HELLO WORLD //HE*LL*OW*OR*LD // HE*LX*LO*WO*RL*DX
+            s1 = inputTextLines_List.get(i);
+            System.out.println("was -->" + s1);
+            s2 = "";
+            for (int j = 0; j < s1.length(); j++) {
+                if (j != s1.length() - 1) {
+                    if (s1.charAt(j) != s1.charAt(j + 1)) {
+                        s2 += (char) s1.charAt(j) + "" + (char) s1.charAt(j + 1) + "" + "*";
+                        j++;
+                    } else {//they do equal eachother
+                        s2 += (char) s1.charAt(j) + "X*";
+                    }
+                } else {
+                    s2 += (char) s1.charAt(j) + "X";
+                }
+            }
+            System.out.println("is now -->" + s2);
+        }
+
+        for (int i = 0; i < inputTextLines_List.size(); i++) {
+            System.out.println(inputTextLines_List.get(i));
+        }
+
         //now encrypt the file
         //line by line....
         //put into pairs
         //if a pair is both of the same letters, make second one X
         //shift the rest of the pairs, repeat till end of line
         //if odd number by end, add X
-
     }
 
     private static void doPlayfairDecrypt() {//TO DO
