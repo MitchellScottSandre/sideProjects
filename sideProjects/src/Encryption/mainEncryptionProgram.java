@@ -375,6 +375,46 @@ public class mainEncryptionProgram {
         }
         return z;
     }
+    
+    private static void doEncryptionWithTableau(int firstChar[], int secondChar[], int rowOfArrayList, int startOfNewRow){
+        char firstCharToAdd = ' ', secondCharToAdd = ' ';
+        //firstChar (array) at 0 == row
+        //firstCharr (array) at 1 == column
+                                                
+            if (firstChar[0] == secondChar[0]){//case 1: same row, with wrap around
+                
+            } else if (firstChar[1] == secondChar[1]){//case 2: same column, with wrap around
+                
+            } else {//case 3: use opposite corners of the rectangle
+                
+            }
+        
+        
+        //for now (for testing everything else, like outputting the file and stuff)
+        if (startOfNewRow == 0){//first char in that new row
+            System.out.println("adding a row to array list for #" + (1 + rowOfArrayList));
+            outputTextLines_List.add("");
+            
+        }
+        //System.out.println("First Char R:" + firstChar[0] + ", C:" + firstChar[1]);
+        //System.out.println("Second Char R:" + secondChar[0] + ", C:" + secondChar[1]);
+       // System.out.println("Before __ doEncryptionWithTableau" + outputTextLines_List.get(rowOfArrayList));
+        String s = "";
+        s = outputTextLines_List.get(rowOfArrayList);
+        //==============================================================================doing this for now for testing purposes
+        s += (char) tableau[firstChar[0]][firstChar[1]];//add first letter
+        s += (char) tableau[secondChar[0]][secondChar[1]];//add second letter
+        
+        s += firstCharToAdd;
+        s += secondCharToAdd;
+        //System.out.println("check that this works too scott");
+        outputTextLines_List.add(rowOfArrayList, s);
+        outputTextLines_List.remove(rowOfArrayList + 1);
+        //System.out.println("After __ doEncryptionWithTableau" + outputTextLines_List.get(rowOfArrayList));
+        
+    
+    }
+    
     private static void doPlayfairEncrypt() {//TO DO
         int choice, typeOfPlayfair = -1;
         final int ALPHABETIC = 1;
@@ -467,24 +507,42 @@ public class mainEncryptionProgram {
                 }
             }
             System.out.println("Scott make sure this works below here:");
+            System.out.println("xxxxNewTest --> inputTextLinesList size before: " + inputTextLines_List.size());
             inputTextLines_List.add(i, s2);
             inputTextLines_List.remove(i + 1);
             System.out.println("2 is now -->" + s2);
             System.out.println("2 is now -->" + inputTextLines_List.get(i));//for testing purposes only
+            System.out.println("xxxxNewTesttTWO --> inputTextLinesList size after: " + inputTextLines_List.size());
         }
 
         for (int i = 0; i < inputTextLines_List.size(); i++) {//for testing purposes only
             System.out.println(inputTextLines_List.get(i));
         }
-        
+        System.out.println("Printing out info from row and col finder loop...");
         for (int i = 0; i < inputTextLines_List.size(); i++){
-            for (int j = 0; j < inputTextLines_List.get(i).length(); j++){
+            System.out.println("Input line number: " + i);
+            System.out.println(inputTextLines_List.get(i));
+            for (int j = 0; j < inputTextLines_List.get(i).length() - 1; j++){
+                System.out.println(inputTextLines_List.get(i).charAt(j) + " $$$$  " + inputTextLines_List.get(i).charAt(j + 1));
                 firstChar_letterRowAndCol = findLetterRowAndCol ( inputTextLines_List.get(i).charAt(j) );
                 secondChar_letterRowAndCol = findLetterRowAndCol( inputTextLines_List.get(i).charAt(j + 1) );
-                //now use these two locations to output the two encrypted 
-                j++;//skip the *
+                //now use these two locations to output the two encrypted chars
+                System.out.print(inputTextLines_List.get(i).charAt(j));
+                System.out.print("  " + inputTextLines_List.get(i).charAt(j + 1) + "\n");
+                doEncryptionWithTableau(firstChar_letterRowAndCol, secondChar_letterRowAndCol, i, j);//firstchar, second char, row of array list
+                j +=2;//skip the *
+                
             }
         }
+        
+        System.out.println("now adding the encrypted text to file / printing it out right now");
+        
+        //display linest of output array after
+        for (int i = 0; i < outputTextLines_List.size(); i++){
+            System.out.println(outputTextLines_List.get(i));
+        }
+        
+        //add it to file
         
         //now, do plafair encrypt
         //firstChar_letterRowAndCol
