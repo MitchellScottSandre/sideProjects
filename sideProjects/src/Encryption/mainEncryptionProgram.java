@@ -27,6 +27,12 @@ public class mainEncryptionProgram {
     private static final String EXIT = "EXIT";
     private static final String[] typesOfEncryptions = {"Playfair", "Vigenere"};
     private static final String ALPHABET = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
+    private static final int END_COL = 4;
+    private static final int END_ROW = 4;
+    private static final int BEGINNING_COL = 0;
+    private static final int BEGINNING_ROW = 0;
+    private static final int ROW = 0;
+    private static final int COL = 1;
     //======================================================Variables================================================
 
     private static String inputFileName;
@@ -377,36 +383,86 @@ public class mainEncryptionProgram {
     }
     
     private static void doEncryptionWithTableau(int firstChar[], int secondChar[], int rowOfArrayList, int startOfNewRow){
-        char firstCharToAdd = ' ', secondCharToAdd = ' ';
-        //firstChar (array) at 0 == row
-        //firstCharr (array) at 1 == column
-                                                
-            if (firstChar[0] == secondChar[0]){//case 1: same row, with wrap around
+        //char encryptedCharOne = ' ', encryptedCharTwo = ' ';
+        String s = "";
+        char originalFirstChar, originalSecondChar;
+        char newFirstChar, newSecondChar;
+        //           ======================= MAKE NEW ROW IN ARRAY LIST ===================
+        if (startOfNewRow == 0){//first char in that new row
+            System.out.println("adding a row to array list for index " + ( rowOfArrayList));
+            outputTextLines_List.add("");
+            if (rowOfArrayList > 0){
+                System.out.println("LAST list index String is " + outputTextLines_List.get(rowOfArrayList - 1));
+            }
+            
+        }
+        originalFirstChar = (char) tableau[firstChar[ROW]][firstChar[COL]];
+        originalSecondChar = (char) tableau[secondChar[ROW]][secondChar[COL]];
+        
+        s =outputTextLines_List.get(rowOfArrayList);
+        
+        //firstChar (array) at 0 == row 0 1 2 3 4
+        //firstCharr (array) at 1 == column 0 1 2 3 4
+            ///================================================SAME ROW, MOVE COLUMN OVER ONE RIGHT WITH WRAP AROUND ================                                    
+            if (firstChar[ROW] == secondChar[ROW]){//case 1: same row, with wrap around horizontal
+                System.out.print("SAME ROW     ");
+                //first char at the right end
+                if (firstChar[COL] == END_COL){//second char must be to left
+                    //System.out.println(rowOfArrayList + " --- Fist Char at end Col Loc");
+                    newFirstChar = (char) tableau[  firstChar [ROW]]  [BEGINNING_COL]        ;//wrap around to beginning
+                    newSecondChar= (char) tableau[  secondChar[ROW]]  [secondChar[COL] + 1  ];//right one moves over one
+                } else if (secondChar[COL] == END_COL){
+                    //System.out.println(rowOfArrayList + " --- Second Char at end Col Loc");
+                    newFirstChar = (char) tableau[  firstChar [ROW]]  [firstChar[COL] + 1]   ;//wrap around to beginning
+                    newSecondChar= (char) tableau[  secondChar[ROW]]  [BEGINNING_COL ]       ;//right one moves over one                  
+                } else {
+                    //System.out.println(rowOfArrayList + " --- None at end col, moving each over to right one");
+                    newFirstChar = (char) tableau[  firstChar [ROW]]  [firstChar[COL] + 1]   ;
+                    newSecondChar= (char) tableau[  secondChar[ROW]]  [secondChar[COL] + 1]   ;               
+                }
+            } else if (firstChar[COL] == secondChar[COL]){//case 2: same column, with wrap around vertical
+                System.out.print("SAME COLUMN    ");
+                 if (firstChar[ROW] == END_ROW){//second char must be above, first char at BOTTOM
+                    //System.out.println(rowOfArrayList + " --- Fist Char at bottom ROW");
+                    newFirstChar = (char) tableau[  BEGINNING_ROW      ]  [firstChar[COL]]        ;//wrap around to beginning
+                    newSecondChar= (char) tableau[  secondChar[ROW] + 1]  [secondChar[COL]  ];//right one moves over one
+                } else if (secondChar[ROW] == END_ROW){//second char is at bottom
+                    //System.out.println(rowOfArrayList + " --- Second Char at end row, move to top");
+                    newFirstChar = (char) tableau[  firstChar [ROW] + 1] [firstChar[COL]]        ;//wrap around to beginning
+                    newSecondChar= (char) tableau[  BEGINNING_ROW      ] [secondChar[COL]  ];//right one moves over one                 
+                } else {
+                    //System.out.println(rowOfArrayList + " --- None at end row");
+                    newFirstChar = (char) tableau[   firstChar[ROW] + 1]   [firstChar[COL]]   ;
+                    newSecondChar= (char) tableau[  secondChar[ROW] + 1]  [secondChar[COL]]   ;               
+                }               
                 
-            } else if (firstChar[1] == secondChar[1]){//case 2: same column, with wrap around
                 
             } else {//case 3: use opposite corners of the rectangle
-                
+                System.out.print("NOT SAME ROW OR COL    ");
+                // a    b
+                // c    d
+                newFirstChar= (char) tableau[firstChar[ROW]][secondChar[COL]];
+                newSecondChar= (char) tableau[secondChar[ROW]][firstChar[COL]];
             }
+            
+        s += newFirstChar;
+        s += newSecondChar;
+        System.out.println("BEFORE " + originalFirstChar + " " + originalSecondChar + " ___ AFTER " + newFirstChar + " " + newSecondChar);
         
         
         //for now (for testing everything else, like outputting the file and stuff)
-        if (startOfNewRow == 0){//first char in that new row
-            System.out.println("adding a row to array list for #" + (1 + rowOfArrayList));
-            outputTextLines_List.add("");
-            
-        }
+
         //System.out.println("First Char R:" + firstChar[0] + ", C:" + firstChar[1]);
         //System.out.println("Second Char R:" + secondChar[0] + ", C:" + secondChar[1]);
        // System.out.println("Before __ doEncryptionWithTableau" + outputTextLines_List.get(rowOfArrayList));
-        String s = "";
-        s = outputTextLines_List.get(rowOfArrayList);
-        //==============================================================================doing this for now for testing purposes
-        s += (char) tableau[firstChar[0]][firstChar[1]];//add first letter
-        s += (char) tableau[secondChar[0]][secondChar[1]];//add second letter
         
-        s += firstCharToAdd;
-        s += secondCharToAdd;
+        //s = outputTextLines_List.get(rowOfArrayList);
+        //==============================================================================doing this for now for testing purposes
+        //s += (char) tableau[firstChar[0]][firstChar[1]];//add first letter
+        //s += (char) tableau[secondChar[0]][secondChar[1]];//add second letter
+        
+        //s += encryptedCharOne;
+        //s += encryptedCharTwo;
         //System.out.println("check that this works too scott");
         outputTextLines_List.add(rowOfArrayList, s);
         outputTextLines_List.remove(rowOfArrayList + 1);
@@ -485,14 +541,14 @@ public class mainEncryptionProgram {
             inputTextLines_List.add(i, s2);
             inputTextLines_List.remove(i + 1);
         }
-        System.out.println("after size is : " + inputTextLines_List.size());
+        //System.out.println("after size is : " + inputTextLines_List.size());
         int offset = 0;
         //===========================put into pairs separated by * and still spaces
         s1 = "";
         s2 = "";
         for (int i = 0; i < inputTextLines_List.size(); i++) {//HELLO WORLD //HE*LL*OW*OR*LD // HE*LX*LO*WO*RL*DX
             s1 = inputTextLines_List.get(i);
-            System.out.println("was -->" + s1);
+            //System.out.println("was -->" + s1);
             s2 = "";
             for (int j = 0; j < s1.length(); j++) {
                 if (j != s1.length() - 1) {
@@ -506,29 +562,29 @@ public class mainEncryptionProgram {
                     s2 += (char) s1.charAt(j) + "X";
                 }
             }
-            System.out.println("Scott make sure this works below here:");
-            System.out.println("xxxxNewTest --> inputTextLinesList size before: " + inputTextLines_List.size());
+            //System.out.println("Scott make sure this works below here:");
+            //System.out.println("xxxxNewTest --> inputTextLinesList size before: " + inputTextLines_List.size());
             inputTextLines_List.add(i, s2);
             inputTextLines_List.remove(i + 1);
-            System.out.println("2 is now -->" + s2);
-            System.out.println("2 is now -->" + inputTextLines_List.get(i));//for testing purposes only
-            System.out.println("xxxxNewTesttTWO --> inputTextLinesList size after: " + inputTextLines_List.size());
+            //System.out.println("2 is now -->" + s2);
+            //System.out.println("2 is now -->" + inputTextLines_List.get(i));//for testing purposes only
+            //System.out.println("xxxxNewTesttTWO --> inputTextLinesList size after: " + inputTextLines_List.size());
         }
 
-        for (int i = 0; i < inputTextLines_List.size(); i++) {//for testing purposes only
-            System.out.println(inputTextLines_List.get(i));
-        }
+//        for (int i = 0; i < inputTextLines_List.size(); i++) {//for testing purposes only
+//            System.out.println(inputTextLines_List.get(i));
+//        }
         System.out.println("Printing out info from row and col finder loop...");
         for (int i = 0; i < inputTextLines_List.size(); i++){
-            System.out.println("Input line number: " + i);
-            System.out.println(inputTextLines_List.get(i));
+            //System.out.println("Input line number: " + i);
+            //System.out.println(inputTextLines_List.get(i));
             for (int j = 0; j < inputTextLines_List.get(i).length() - 1; j++){
-                System.out.println(inputTextLines_List.get(i).charAt(j) + " $$$$  " + inputTextLines_List.get(i).charAt(j + 1));
+                //System.out.println(inputTextLines_List.get(i).charAt(j) + " $$$$  " + inputTextLines_List.get(i).charAt(j + 1));
                 firstChar_letterRowAndCol = findLetterRowAndCol ( inputTextLines_List.get(i).charAt(j) );
                 secondChar_letterRowAndCol = findLetterRowAndCol( inputTextLines_List.get(i).charAt(j + 1) );
                 //now use these two locations to output the two encrypted chars
-                System.out.print(inputTextLines_List.get(i).charAt(j));
-                System.out.print("  " + inputTextLines_List.get(i).charAt(j + 1) + "\n");
+                //System.out.print(inputTextLines_List.get(i).charAt(j));
+                //System.out.print("  " + inputTextLines_List.get(i).charAt(j + 1) + "\n");
                 doEncryptionWithTableau(firstChar_letterRowAndCol, secondChar_letterRowAndCol, i, j);//firstchar, second char, row of array list
                 j +=2;//skip the *
                 
@@ -539,6 +595,7 @@ public class mainEncryptionProgram {
         
         //display linest of output array after
         for (int i = 0; i < outputTextLines_List.size(); i++){
+            System.out.println("test..");
             System.out.println(outputTextLines_List.get(i));
         }
         
