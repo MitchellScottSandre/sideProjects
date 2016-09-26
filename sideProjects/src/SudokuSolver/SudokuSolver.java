@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Sudoku;
+package SudokuSolver;
 
 /**
  *
@@ -12,7 +12,7 @@ package Sudoku;
 
 //parse in photo to 2d array
 //if not, display error message, quit application
-public class Sudoku {
+public class SudokuSolver {
 
     /**
      * @param args the command line arguments

@@ -6,6 +6,7 @@
 package Encryption;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -20,6 +21,7 @@ public class mainEncryptionProgram {
     private static Scanner input = new Scanner(System.in);
     private static Scanner fileScanner;
     private static PrintWriter outputWriter;
+    private static PrintWriter outputWriter2;
 
     //======================================================Constants================================================
     private static final int ENCRYPT = 1;
@@ -41,6 +43,7 @@ public class mainEncryptionProgram {
     private static String outputText = "";
     private static File inputFile;
     private static File outputFile;
+    private static File outputRandomTableauFile;
     private static int encryptOrDecrypt;
     private static int typeOfEncryption;
     private static boolean exit = false;
@@ -49,11 +52,12 @@ public class mainEncryptionProgram {
     private static String outputLine;
     private static ArrayList<String> inputTextLines_List = new ArrayList<String>();
     private static ArrayList<String> outputTextLines_List = new ArrayList<String>();
-
-    //playFair
+    private static String randomTableauOutputLocationAndName = "";
     private static int[][] tableau = new int[5][5];
     private static String playfairEncryptionCode;
     private static String playfairDecryptionCode;
+    private static String date = "September 25, 2016";
+    private static String version = "1.1";
 
     //======================================================Functions================================================
     private static void exit() {
@@ -63,8 +67,10 @@ public class mainEncryptionProgram {
     }
 
     private static void startScreen() {
-        System.out.println("Start screen here:");
+        System.out.println("Encryption Program:");
+        System.out.println("This program allows a user to import a file, select whether they would like to encrypt or decrypt,\n and then have the encrypted or decrypted file exported to a directory and file of their choosing");
         System.out.println("At any time, enter EXIT to exit the progam.");
+        System.out.println("\n\n\n\n\nVersion: " + version + "\n\nDate of Version Release: " + date + "\n\n\n\n");
     }
 
     private static void getEncryptOrDecrypt() {
@@ -90,7 +96,6 @@ public class mainEncryptionProgram {
 
     private static void getFileNames() {
         String word = "decrypt", otherWord = "decrypted", correctInput, tempLine;
-
         boolean gotConfirmedInput = false;
         boolean gotGoodConfirmationInput;
         boolean inputFileExists = false;
@@ -104,11 +109,9 @@ public class mainEncryptionProgram {
             gotGoodConfirmationInput = false;
             System.out.println("Enter location and file name of file you wish to " + word + ": ");
             inputFileName = input.nextLine();
-
             if (inputFileName.equalsIgnoreCase("EXIT")) {
                 exit();
             }
-
             System.out.println("You entered: " + inputFileName + ". Is this correct? Y or N: ");
             while (gotGoodConfirmationInput == false) {
                 correctInput = input.nextLine();
@@ -123,7 +126,6 @@ public class mainEncryptionProgram {
                     exit();
                 }
             }
-
             try {//=========================scan in INPUT FILE
                 inputFile = new File(inputFileName);
                 fileScanner = new Scanner(inputFile);
@@ -139,18 +141,12 @@ public class mainEncryptionProgram {
                         outputTextLines_List.add("");
                     }
                 }
-
-//                for (int i = 0; i < inputTextLines_List.size(); i++) {//testing purposes
-//                    System.out.println(inputTextLines_List.get(i));
-//                }
             } catch (Exception e) {
                 System.out.println("Could not find the file... Try entering it's Location and Name again");
                 gotConfirmedInput = false;
             }
         }
-        
-        System.out.println("scan in loc: inputTextLines_List size is " + inputTextLines_List.size());
-
+       
         //=================================================== get output file location and name
         gotConfirmedInput = false;
         System.out.println("\nGet Output File Name:");
@@ -187,8 +183,6 @@ public class mainEncryptionProgram {
             }
         }
 
-        //TO DO
-        //try reading in the 
     }
 
     private static void getTypeOfEncryption() {
@@ -231,7 +225,15 @@ public class mainEncryptionProgram {
         }
     }
 
-    private static void makeRandomTableau() {//TO DO ----> print this tableau to same directory as output, but C:\test\tableau + dateTimeStamp.txt
+    private static void findLocOfRandomTableauOutput(){
+
+        String loc = inputFileName.substring(0, inputFileName.lastIndexOf("\\"));
+        randomTableauOutputLocationAndName = loc + "\\randomTableau.txt";
+        System.out.println("tableau output is " + randomTableauOutputLocationAndName);
+        
+    }
+    
+    private static void makeRandomTableau() throws FileNotFoundException {//TO DO ----> print this tableau to same directory as output, but C:\test\tableau + dateTimeStamp.txt
         int j;
         boolean foundGoodSpot = false;
         int[] usedLetters = new int[25];
@@ -252,6 +254,20 @@ public class mainEncryptionProgram {
                 }
             }
         }
+        findLocOfRandomTableauOutput();
+        outputRandomTableauFile = new File(randomTableauOutputLocationAndName);//makes that file
+        outputWriter2 = new PrintWriter(outputRandomTableauFile);
+        String s;
+        for (int i = 0; i < 5; i++) {
+            s = "";
+            for (int z = 0; z < 5; z++){
+                s += (char) tableau[i][z] + " ";
+            }
+            outputWriter2.write(s);
+            outputWriter2.println();
+        }
+        outputWriter2.close();
+        
     }
 
     private static boolean goodCodeWord(String s) {
@@ -264,12 +280,12 @@ public class mainEncryptionProgram {
     }
 
     private static void removeRepeatedLettersAndSpaces_in_PlayfairCodeWord() {
-        System.out.println("CODE WAS: " + playfairEncryptionCode);
+        //System.out.println("CODE WAS: " + playfairEncryptionCode);
         StringBuilder sb = new StringBuilder(playfairEncryptionCode);//sb.deleteCharAt
         //String resultString = sb.toString();
 
         playfairEncryptionCode = sb.toString();
-        System.out.println("CODE then: " + playfairEncryptionCode);
+        //System.out.println("CODE then: " + playfairEncryptionCode);
         for (int i = 0; i < sb.length() - 1; i++) {
             for (int z = i + 1; z < sb.length(); z++) {
                 if (sb.charAt(i) == sb.charAt(z)) {
@@ -279,7 +295,7 @@ public class mainEncryptionProgram {
             }
         }
         playfairEncryptionCode = sb.toString();
-        System.out.println("CODE IS NOW: " + playfairEncryptionCode);
+        //System.out.println("CODE IS NOW: " + playfairEncryptionCode);
     }
 
     private static String getRestOfAlphabet() {
@@ -332,7 +348,7 @@ public class mainEncryptionProgram {
             playfairEncryptionCode = sb.toString();
             if (goodCodeWord(playfairEncryptionCode) == true) {
                 gotGoodInput = true;
-                System.out.println("good code word");
+                System.out.println("Good code word");
                 //remove any repeated letters
                 playfairEncryptionCode = playfairEncryptionCode.replace('J', 'I');//replace any J with I
                 removeRepeatedLettersAndSpaces_in_PlayfairCodeWord();
@@ -394,17 +410,7 @@ public class mainEncryptionProgram {
         String s = "";
         char originalFirstChar, originalSecondChar;
         char newFirstChar, newSecondChar;
-        //           ======================= MAKE NEW ROW IN ARRAY LIST ===================
-//        if (startOfNewRow == 0){//first char in that new row
-//            //System.out.println("adding a row to array list for index " + ( rowOfArrayList));
-//            outputTextLines_List.add("");
-//            if (rowOfArrayList > 0){
-//                //System.out.println("LAST list index String is " + outputTextLines_List.get(rowOfArrayList - 1));
-//            }
-//            
-//        }
-       // System.out.println("first char row: " + firstChar[ROW] + ", firstChar col: " + firstChar[COL]);
-        //System.out.println("second char row: " + secondChar[ROW] + ", secondChar col: " + secondChar[COL]);
+
         originalFirstChar = (char) tableau[firstChar[ROW]][firstChar[COL]];
         originalSecondChar = (char) tableau[secondChar[ROW]][secondChar[COL]];
         
@@ -447,9 +453,7 @@ public class mainEncryptionProgram {
                 
                 
             } else {//case 3: use opposite corners of the rectangle
-                //System.out.print("NOT SAME ROW OR COL    ");
-                // a    b
-                // c    d
+
                 newFirstChar= (char) tableau[firstChar[ROW]][secondChar[COL]];
                 newSecondChar= (char) tableau[secondChar[ROW]][firstChar[COL]];
             }
@@ -464,7 +468,7 @@ public class mainEncryptionProgram {
     
     }
     
-    private static void doPlayfairEncrypt() {//TO DO
+    private static void doPlayfairEncrypt() throws FileNotFoundException {//TO DO
         int choice, typeOfPlayfair = -1;
         final int ALPHABETIC = 1;
         final int CODE_MERGE_ALPHABETIC = 2;
@@ -480,7 +484,7 @@ public class mainEncryptionProgram {
         System.out.println("Playfair Encryption uses a tableau of 5 x 5 letters to encode your file.");
         System.out.println("This tableau can either use a scrambled alphabet or use a codephrase made by you,");
         System.out.println("which automatically has any repeated letters removed, insterted into an alphabetic tableau.\nYour choices are:");
-        System.out.println("1: Random, Scrabled Tableau (write down key)");
+        System.out.println("1: Random, Scrabled Tableau (key will be saved to input file directory)");
         System.out.println("2: Code Phrase merged into an Alphabetic Tableau");
 
         while (gotGoodInput == false) {
@@ -555,24 +559,14 @@ public class mainEncryptionProgram {
                     s2 += (char) s1.charAt(j) + "X";
                 }
             }
-            //System.out.println("Scott make sure this works below here:");
-            //System.out.println("xxxxNewTest --> inputTextLinesList size before: " + inputTextLines_List.size());
             inputTextLines_List.add(i, s2);
             inputTextLines_List.remove(i + 1);
-            //System.out.println("2 is now -->" + s2);
-            //System.out.println("2 is now -->" + inputTextLines_List.get(i));//for testing purposes only
-            //System.out.println("xxxxNewTesttTWO --> inputTextLinesList size after: " + inputTextLines_List.size());
+
         }
 
-//        for (int i = 0; i < inputTextLines_List.size(); i++) {//for testing purposes only
-//            System.out.println(inputTextLines_List.get(i));
-//        }
         System.out.println("Printing out info from row and col finder loop...");
         for (int i = 0; i < inputTextLines_List.size(); i++){
-            //System.out.println("Input line number: " + i);
-            //System.out.println(inputTextLines_List.get(i));
 
-            
             if (inputTextLines_List.get(i).length() == 0) {
                     //System.out.println("length is 0 at index " + i);
                     i++;
@@ -581,30 +575,144 @@ public class mainEncryptionProgram {
                 //System.out.println(inputTextLines_List.get(i).charAt(j) + " $$$$  " + inputTextLines_List.get(i).charAt(j + 1));
                 firstChar_letterRowAndCol = findLetterRowAndCol ( inputTextLines_List.get(i).charAt(j) );
                 secondChar_letterRowAndCol = findLetterRowAndCol( inputTextLines_List.get(i).charAt(j + 1) );
-                //now use these two locations to output the two encrypted chars
-                //System.out.print(inputTextLines_List.get(i).charAt(j));
-                //System.out.print("  " + inputTextLines_List.get(i).charAt(j + 1) + "\n");
-                
+           
                 doEncryptionWithTableau(firstChar_letterRowAndCol, secondChar_letterRowAndCol, i, j);//firstchar, second char, row of array list
                 j +=2;//skip the *
                 
             }
         }
         
-        //display linest of output array after
-//        for (int i = 0; i < outputTextLines_List.size(); i++){
-//            //System.out.println("Before: " + inputTextLines_List.get(i));
-//            //System.out.println("After : " + outputTextLines_List.get(i));
-//        }
-        
-        //add it to file
         writeToOutputFile();
         
         
     }
+    
+    private static void getRandomTableauFromUser(){
+        System.out.println("For each row, please enter the 5 letters, without spaces, correspoding to  that row on your encryption tableau: ");
+        String row = "", answer = "";
+        boolean gotConfirmedInput = false;
 
+        while (gotConfirmedInput == false) {
+            for (int i = 0; i < 5; i++) {
+                System.out.print("Row #" + (i + 1) + ": ");
+                row = input.nextLine();
+                for (int c = 0; c < 5; c++) {
+                    tableau[i][c] = row.charAt(c);
+                }
+            }
+            System.out.println("Is this the correct tableau you meant to enter? \nY for Yes, N for N:");
+            answer = input.nextLine();
+            if (answer.equalsIgnoreCase("Y")){
+                gotConfirmedInput = true;
+            } else {
+                System.out.println("Okay. Try again.");
+            }
+        }
+        
+    }
+
+    private static void doDecryptionWithTableau(int firstChar[], int secondChar[], int rowOfArrayList){
+             //char encryptedCharOne = ' ', encryptedCharTwo = ' ';
+        String s = "";
+        char originalFirstChar, originalSecondChar;
+        char newFirstChar, newSecondChar;
+
+        originalFirstChar = (char) tableau[firstChar[ROW]][firstChar[COL]];
+        originalSecondChar = (char) tableau[secondChar[ROW]][secondChar[COL]];
+        
+        s =outputTextLines_List.get(rowOfArrayList);
+        
+     
+            ///================================================SAME ROW, MOVE COLUMN OVER ONE RIGHT WITH WRAP AROUND ================                                    
+            if (firstChar[ROW] == secondChar[ROW]){//case 1: same row, with wrap around horizontal LEFT
+                if (firstChar[COL] == BEGINNING_COL){//second char must be to right
+                    newFirstChar = (char) tableau[  firstChar [ROW]]  [END_COL]        ;
+                    newSecondChar= (char) tableau[  secondChar[ROW]]  [secondChar[COL] - 1  ];
+                } else if (secondChar[COL] == BEGINNING_COL){
+                    newFirstChar = (char) tableau[  firstChar [ROW]]  [firstChar[COL] - 1]   ;
+                    newSecondChar= (char) tableau[  secondChar[ROW]]  [END_COL ]       ;//                  
+                } else {
+                    newFirstChar = (char) tableau[  firstChar [ROW]]  [firstChar[COL] - 1]   ;
+                    newSecondChar= (char) tableau[  secondChar[ROW]]  [secondChar[COL] - 1]   ;               
+                }
+            } else if (firstChar[COL] == secondChar[COL]){//case 2: same column, with wrap around vertical
+                 if (firstChar[ROW] == BEGINNING_ROW){      
+                    newFirstChar = (char) tableau[  END_ROW      ]  [firstChar[COL]]  ;
+                    newSecondChar= (char) tableau[  secondChar[ROW] - 1]  [secondChar[COL]  ];
+                } else if (secondChar[ROW] == BEGINNING_ROW){
+                    
+                    newFirstChar = (char) tableau[  firstChar [ROW] - 1] [firstChar[COL]]        ;
+                    newSecondChar= (char) tableau[  END_ROW      ] [secondChar[COL]  ];               
+                } else {
+              
+                    newFirstChar = (char) tableau[   firstChar[ROW] - 1]   [firstChar[COL]]   ;
+                    newSecondChar= (char) tableau[  secondChar[ROW] - 1]  [secondChar[COL]]   ;               
+                }               
+                
+                
+            } else {//case 3: use opposite corners of the rectangle
+
+                newFirstChar= (char) tableau[firstChar[ROW]][secondChar[COL]];
+                newSecondChar= (char) tableau[secondChar[ROW]][firstChar[COL]];
+            }
+            
+        s += newFirstChar;
+        s += newSecondChar;
+        //System.out.println("BEFORE " + originalFirstChar + " " + originalSecondChar + " ___ AFTER " + newFirstChar + " " + newSecondChar);
+
+        outputTextLines_List.add(rowOfArrayList, s);
+        outputTextLines_List.remove(rowOfArrayList + 1);
+        
+    }
+    
     private static void doPlayfairDecrypt() {//TO DO
         System.out.println("Playfair Decryption:");
+        //get them to input the random tableau, or input the passphrase
+        int firstChar_letterRowAndCol[] = new int[2];
+        int secondChar_letterRowAndCol[] = new int[2];
+        boolean gotGoodInput = false;
+        int choice;
+        System.out.println("Playfair Encryption uses a tableau of 5 x 5 letters to encode your file.");
+        System.out.println("This tableau can either use a scrambled alphabet or use a codephrase made by you,");
+        System.out.println("which automatically has any repeated letters removed, insterted into an alphabetic tableau.\nYour choices for the encryption used are:");
+        System.out.println("1: Random, Scrabled Tableau ");
+        System.out.println("2: Code Phrase merged into an Alphabetic Tableau");
+        while (gotGoodInput == false){
+            System.out.println("Please enter your choice: ");
+            try {
+                choice = Integer.parseInt(input.nextLine());
+                if (choice == 1){
+                    //get them to input the entire random tableau
+                    gotGoodInput = true;
+                    getRandomTableauFromUser();
+                } else if (choice == 2){
+                    makeCodePhraseTableau();
+                    gotGoodInput = true;
+                } else {
+                    System.out.println("Incorrect number entered. Please try again");
+                }
+            } catch (Exception e){
+                System.out.println("Oh no, something went wrong. Try again");
+            }
+        }
+        
+        displayTableau();
+        
+        for (int i = 0; i < inputTextLines_List.size(); i++) {
+
+            if (inputTextLines_List.get(i).length() == 0) {
+                i++;
+            }
+            for (int j = 0; j < inputTextLines_List.get(i).length() - 1; j++) {              
+                firstChar_letterRowAndCol = findLetterRowAndCol(inputTextLines_List.get(i).charAt(j));
+                secondChar_letterRowAndCol = findLetterRowAndCol(inputTextLines_List.get(i).charAt(j + 1));
+                doDecryptionWithTableau(firstChar_letterRowAndCol, secondChar_letterRowAndCol, i);//firstchar, second char, row of array list
+                j++;//skip the *
+
+            }
+        }
+        
+        writeToOutputFile();
     }
 
     private static void doVigenereEncrypt() {//TO DO
@@ -697,7 +805,7 @@ public class mainEncryptionProgram {
         System.out.println("Done.");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
         startScreen();
         getEncryptOrDecrypt();//ex: encrypt
