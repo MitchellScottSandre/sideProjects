@@ -750,7 +750,9 @@ public class mainEncryptionProgram {
                 outputLine += (char) newAsciiValue;
 
             }
-            outputTextLines_List.add(outputLine);
+
+            outputTextLines_List.add(z, outputLine);//ERROR ==> fixed
+            outputTextLines_List.remove(z + 1);
             //System.out.println(outputLine);//testing purposes only
         }
 
@@ -786,7 +788,8 @@ public class mainEncryptionProgram {
                 outputLine += (char) decryptedValue;
 
             }
-            outputTextLines_List.add(outputLine);
+            outputTextLines_List.add(z, outputLine);//ERROR ==> fixed
+            outputTextLines_List.remove(z + 1);
             //System.out.println(outputLine);testing purposes only
         }
 
