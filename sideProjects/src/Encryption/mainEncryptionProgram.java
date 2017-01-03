@@ -70,7 +70,7 @@ public class mainEncryptionProgram {
         System.out.println("Encryption Program:");
         System.out.println("This program allows a user to import a file, select whether they would like to encrypt or decrypt,\n and then have the encrypted or decrypted file exported to a directory and file of their choosing");
         System.out.println("At any time, enter EXIT to exit the progam.");
-        System.out.println("\n\n\n\n\nVersion: " + version + "\n\nDate of Version Release: " + date + "\n\n\n\n");
+        System.out.println("Version: " + version + "\nDate of Version Release: " + date + "\n");
     }
 
     private static void getEncryptOrDecrypt() {
